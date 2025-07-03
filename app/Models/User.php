@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Model;
+
 
 class User extends Authenticatable
 {
@@ -17,6 +19,11 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+
+    protected $table ='users';
+
+    protected $primaryKey = 'id';
+
     protected $fillable = [
         'name',
         'email',
@@ -44,5 +51,29 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function teams() {
+        return $this->belongsToMany(Team::class, 'team_members')
+        ->withPivot('role');
+    }
+
+
+    public function createdTeams() {
+        return $this->hasMany(Team::class, 'created_by');
+    }
+
+    public function notes() {
+        return $this->hasMany(Note::class, 'created_by');
+    }
+
+    public function activeNotes()
+     {
+    return $this->belongsToMany(Note::class, 'notes_session')
+               ->using(NoteSession::class)
+               ->withPivot('active_at');
+
+
+    
     }
 }
