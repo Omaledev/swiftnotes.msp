@@ -15,13 +15,14 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->longText('content');
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->foreign('created_by')
-                ->constrained('users')
-                ->onDelete('set null');
-            $table->foreign('team_id')
-                ->constrained('teams')
-                ->onDelete('cascade');
-            $table->index('created_by');
+                    ->references('id')
+                    ->on('users')
+                    ->onDelete('set null');
+            $table->foreignId('team_id')
+                    ->constrained('teams')
+                    ->onDelete('cascade');
             $table->timestamps();
         });
     }

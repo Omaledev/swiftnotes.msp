@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('team_members', function (Blueprint $table) {
             $table->id();
-            $table->foreign('team_id')
+            $table->foreignId('team_id')
                 ->constrained('teams')
                 ->onDelete('cascade');
-            $table->foreign('user_id')
+            $table->foreignId('user_id')
                 ->constrained('users')
                 ->onDelete('cascade');
             $table->enum('role', ['owner', 'member']);
             $table->unique(['team_id', 'user_id']);;
-            $table->index('created_by');
+
             $table->timestamp('joined_at')->useCurrent();
         });
     }
