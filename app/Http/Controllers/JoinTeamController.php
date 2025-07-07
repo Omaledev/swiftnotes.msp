@@ -25,9 +25,9 @@ class JoinTeamController extends Controller
 
             $userId = Auth::id();
 
-            $result = DB::transaction(function () use ($validated, $userId) {
+            $team = DB::transaction(function () use ($validated, $userId) {
                 $team = Team::where('invite_code', $validated['invite_code'])
-                    ->lockForUpdate() 
+                    ->lockForUpdate()
                     ->firstOrFail();
 
                 if ($team->members()->where('user_id', $userId)->exists()) {
@@ -35,35 +35,23 @@ class JoinTeamController extends Controller
                 }
 
                 $team->members()->attach($userId, ['role' => 'member']);
-
-                return [
-                    'team' => $team,
-                    'redirect' => route('dashboard')
-                ];
+                return $team;
             });
 
-            return response()->json([
-                'success' => true,
-                'team' => $result['team'],
-                'redirect' => $result['redirect']
-            ]);
+            return redirect()->route('dashboard')
+                ->with('success', "Successfully joined team: {$team->name}!");
 
         } catch (ValidationException $e) {
-            return response()->json([
-                'error' => 'Validation failed',
-                'messages' => $e->errors()
-            ], 422);
+            return back()
+                ->withErrors($e->errors())
+                ->withInput();
 
         } catch (\Exception $e) {
-            $statusCode = $e->getCode() >= 400 && $e->getCode() < 600
-                ? $e->getCode()
-                : 500;
+            $statusCode = $e->getCode() >= 400 && $e->getCode() < 600 ? $e->getCode() : 500;
 
-            return response()->json([
-                'error' => 'Failed to join team',
-                'message' => $e->getMessage(),
-                'details' => config('app.debug') ? $e->getTrace() : null
-            ], $statusCode);
+            return back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
     }
 }

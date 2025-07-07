@@ -12,11 +12,13 @@ use Illuminate\Support\Facades\Auth;
 
 class CreateTeamController extends Controller
 {
+
     public function createTeam()
     {
         return view('teams.create');
     }
 
+    
     public function createTeams(Request $request)
     {
         try {
@@ -26,7 +28,7 @@ class CreateTeamController extends Controller
 
             $userId = Auth::id();
 
-            $result = DB::transaction(function () use ($validated, $userId) {
+            DB::transaction(function () use ($validated, $userId) {
                 $team = Team::create([
                     'name' => $validated['name'],
                     'invite_code' => 'TEAM-' . Str::upper(Str::random(6)),
@@ -34,31 +36,21 @@ class CreateTeamController extends Controller
                 ]);
 
                 $team->members()->attach($userId, ['role' => 'owner']);
-
-                return [
-                    'team' => $team,
-                    'redirect' => route('dashboard')
-                ];
             });
 
-            return response()->json([
-                'success' => true,
-                'team' => $result['team'],
-                'redirect' => $result['redirect']
-            ]);
+            return redirect()
+                ->route('dashboard')
+                ->with('success', 'Team created successfully!');
 
         } catch (ValidationException $e) {
-            return response()->json([
-                'error' => 'Validation failed',
-                'messages' => $e->errors()
-            ], 422);
+            return back()
+                ->withErrors($e->errors())
+                ->withInput();
 
         } catch (Exception $e) {
-            return response()->json([
-                'error' => 'Team creation failed',
-                'message' => $e->getMessage(),
-                'details' => config('app.debug') ? $e->getTrace() : null
-            ], 500);
+            return back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
     }
 }

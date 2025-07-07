@@ -16,6 +16,16 @@ class Team extends Model
         'created_by'     
     ];
 
+    protected $appends = ['joined_at'];
+
+    public function getJoinedAtAttribute()
+    {
+        if ($this->pivot) {
+            return $this->pivot->joined_at;
+        }
+        return null;
+    }
+
    
     public function members() {
         return $this->belongsToMany(User::class, 'team_members')
