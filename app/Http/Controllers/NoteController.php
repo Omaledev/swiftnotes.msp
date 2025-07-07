@@ -12,12 +12,17 @@ class NoteController extends Controller
 {
     public function index(Team $team)
     {
-        $notes = $team->notes()->with(['creator', 'activeEditors'])->get();
+        $notes = $team->notes()->with(['creator', 'activeEditors'])->latest()->get();
         $user = Auth::user();
         $isOwner = $team->created_by === $user->id;
         $memberCount = $team->members()->count();
 
-        return view('notes.index', compact('notes', 'team', 'isOwner', 'memberCount'));
+        return view('notes.index', [
+            'team' => $team,
+            'notes' => $notes,
+            'isOwner' => $isOwner,
+            'memberCount' => $memberCount
+        ]);
     }
 
     public function store(Request $request, Team $team)
@@ -34,57 +39,56 @@ class NoteController extends Controller
             'created_by' => Auth::id()
         ]);
 
-        return redirect()->route('notes.show', $note);
+        return redirect()->route('notes.index', $team)
+            ->with('success', 'Note created successfully!');
     }
 
     public function show(Note $note)
     {
         $note->load(['creator', 'team.members', 'activeEditors']);
-        $user = Auth::user();
-        $canDelete = $note->created_by === $user->id || $note->team->created_by === $user->id;
+        $canDelete = $note->created_by === Auth::id() || $note->team->created_by === Auth::id();
 
-        return view('notes.show', compact('note', 'canDelete'));
+        return view('notes.show', [
+            'note' => $note,
+            'canDelete' => $canDelete,
+            'team' => $note->team
+        ]);
     }
 
     public function update(Request $request, Note $note)
     {
         $request->validate([
-            'title' => 'sometimes|string|max:255',
-            'content' => 'sometimes|string'
+            'title' => 'required|string|max:255',
+            'content' => 'required|string'
         ]);
 
         $note->update($request->only(['title', 'content']));
 
-        return response()->json(['success' => true]);
+        return back()->with('success', 'Note updated successfully!');
     }
 
     public function destroy(Note $note)
-    {
-        $user = Auth::user();
-        if ($note->created_by !== $user->id && $note->team->created_by !== $user->id) {
-            abort(403);
-        }
-
-        $note->delete();
-        return redirect()->route('notes.index', $note->team);
+{
+    
+    if (Auth::id() !== $note->created_by && Auth::id() !== $note->team->created_by) {
+        abort(403, 'Unauthorized action.');
     }
+
+    $note->delete();
+
+    return redirect()->route('notes.index', $note->team)
+        ->with('success', 'Note deleted successfully!');
+   }
 
     public function startEditing(Note $note)
     {
-        NoteSession::updateOrCreate(
-            ['user_id' => Auth::id(), 'note_id' => $note->id],
-            ['active_at' => now()]
-        );
-
-        return response()->json(['success' => true]);
+        $note->activeEditors()->syncWithoutDetaching([Auth::id() => ['active_at' => now()]]);
+        return back();
     }
 
     public function stopEditing(Note $note)
     {
-        NoteSession::where('user_id', Auth::id())
-            ->where('note_id', $note->id)
-            ->delete();
-
-        return response()->json(['success' => true]);
+        $note->activeEditors()->detach(Auth::id());
+        return back();
     }
 }

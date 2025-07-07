@@ -6,22 +6,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Team;
+use Illuminate\Database\Eloquent\Collection; // Add this import
 
 class DashboardController extends Controller
 {
     public function dashboard()
     {
-        /** @var User $user */
+        /** @var User $user */ // Type hint for IDE
         $user = Auth::user();
 
-
-        $ownedTeams = $user->createdTeams;
-
-
-        $joinedTeams = $user->teams()->where('teams.created_by', '!=', $user->id)->get();
+        /** @var Collection<Team> $joinedTeams */ // Type hint for collection
+        $joinedTeams = $user->teams()
+            ->with('owner')
+            ->where('created_by', '!=', $user->id)
+            ->get();
 
         return view('dashboard', [
-            'ownedTeams' => $ownedTeams,
+            'user' => $user,
+            'ownedTeams' => $user->createdTeams,
             'joinedTeams' => $joinedTeams
         ]);
     }

@@ -7,7 +7,7 @@ use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CreateTeamController;
 use App\Http\Controllers\JoinTeamController;
-use App\Http\Controllers\CreateNoteController;
+use App\Http\Controllers\NoteController;
 
 
 // register,login and logout routes
@@ -24,12 +24,25 @@ Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showRese
 Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/teams', [CreateTeamController::class, 'createTeam']);
-    Route::post('/teams/join', [JoinTeamController::class, 'joinTeam']);
-    Route::post('/notes', [CreateNoteController::class, 'createNote']);
-    Route::post('/teams', [CreateTeamController::class, 'createTeam']);
-    Route::post('/teams/join', [JoinTeamController::class, 'joinTeam']);
-    Route::post('/notes', [CreateNoteController::class, 'createNote']);
+    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+
+    Route::get('/teams/create', [CreateTeamController::class, 'createTeam'])->name('teams.create');
+    Route::post('/teams', [CreateTeamController::class, 'createTeams'])->name('teams.store');
+
+    Route::get('/teams/join', [JoinTeamController::class, 'joinTeam'])->name('teams.join');
+    Route::post('/teams/join', [JoinTeamController::class, 'joinTeams'])->name('teams.join.store');
+
+    // Notes routes
+    Route::get('/teams/{team}/notes', [NoteController::class, 'index'])->name('notes.index');
+    Route::post('/teams/{team}/notes', [NoteController::class, 'store'])->name('notes.store');
+    Route::get('/notes/{note}', [NoteController::class, 'show'])->name('notes.show');
+    Route::put('/notes/{note}', [NoteController::class, 'update'])->name('notes.update');
+    Route::delete('/notes/{note}', [NoteController::class, 'destroy'])->name('notes.destroy');
+
+    // Live editing tracking
+    Route::post('/notes/{note}/start-editing', [NoteController::class, 'startEditing']);
+    Route::post('/notes/{note}/stop-editing', [NoteController::class, 'stopEditing']);
+
 });
 
-Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+
