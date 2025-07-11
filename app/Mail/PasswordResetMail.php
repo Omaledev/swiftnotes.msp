@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Mail;
-
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -25,7 +24,7 @@ class PasswordResetMail extends Mailable
 
     public function build() {
         return $this->subject('password Reset Request')
-        ->view('emails.password-reset');
+        ->view('email.password-reset');
     }
 
     /**
@@ -34,7 +33,7 @@ class PasswordResetMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'SwiftNotes Reset Mail',
+            subject: 'SwiftNotes',
         );
     }
 
@@ -44,7 +43,7 @@ class PasswordResetMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.password-reset',
+            view: 'email.password-reset',
         );
     }
 

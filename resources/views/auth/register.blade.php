@@ -23,7 +23,9 @@
             <form id="registrationForm" method="POST" action="{{ route('register') }}">
                 @csrf
                 <div class="px-3 py-4 sm:px-4 sm:py-6">
-
+                    <h1 class="text-center text-gray-600 font-bold tracking-wider text-xl sm:text-2xl md:text-3xl uppercase mb-2 sm:mb-3 transform transition-all hover:scale-105">
+                        SWIFT<span class="text-amber-300">NOTES</span>
+                    </h1>
                     <!-- Compact divider -->
                     <div class="flex items-center justify-center mb-4 sm:mb-5">
                         <div class="flex-1 border-t border-gray-300"></div>

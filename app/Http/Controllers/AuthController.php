@@ -56,6 +56,15 @@ class AuthController extends Controller
         if(auth::attempt($request->only(['email','password']), $request->remember)) {
            $request->session()->regenerate();
 
+
+           // Get the authenticated user with the created teams
+             $user = Auth::user();
+
+              // Check if user has owned teams
+             if ($user->createdTeams->count() > 0) {
+            $request->session()->put('current_team', $user->createdTeams->first());
+          }
+
            return redirect()->intended('dashboard')
            ->with('success', 'You have successfully login!');
         }
@@ -79,5 +88,3 @@ class AuthController extends Controller
     }
 
 }
-
-
