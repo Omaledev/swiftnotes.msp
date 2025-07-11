@@ -6,33 +6,30 @@ use Illuminate\Database\Eloquent\Model;
 
 class Note extends Model
 {
-    protected $table ='notes';
-
-    protected $primaryKey = 'id';
-
     protected $fillable = [
-        'title',       
-        'content',     
-        'team_id',     
-        'created_by'   
+        'title',
+        'content',
+        'team_id',
+        'created_by'
     ];
 
-    public function users() {
-        return $this->belongsTo(User::class);
+    // Relationship: Note belongs to a User (creator)
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
+    // Relationship: Note belongs to a Team
     public function team()
     {
-    return $this->belongsTo(Team::class);
-    
-   }
+        return $this->belongsTo(Team::class);
+    }
 
-   public function activeEditors()
-   {
-    return $this->belongsToMany(User::class, 'notes_session')
-        ->using(NoteSession::class)
-        ->withPivot('active_at');
-   }
-
-   
+    // Relationship: Active editors (users editing the note)
+    public function activeEditors()
+    {
+        return $this->belongsToMany(User::class, 'notes_session')
+            ->using(NoteSession::class)
+            ->withPivot('active_at');
+    }
 }

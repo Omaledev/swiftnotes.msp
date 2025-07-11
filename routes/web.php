@@ -8,6 +8,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CreateTeamController;
 use App\Http\Controllers\JoinTeamController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingsController;
 
 
 // register,login and logout routes
@@ -15,7 +19,7 @@ Route::get('/register', [AuthController::class, 'showregister'])->name('auth.reg
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::get('/login', [AuthController::class, 'showlogin'])->name('auth.login');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Forgot & reset Password routes
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
@@ -43,6 +47,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/notes/{note}/start-editing', [NoteController::class, 'startEditing']);
     Route::post('/notes/{note}/stop-editing', [NoteController::class, 'stopEditing']);
 
+    // Navigation Features
+    // Route::get('/chat', [ChatController::class, 'index'])->name('pages.chat');
+    // Route::get('/contacts', [ContactController::class, 'index'])->name('pages.contact');
+    // Route::get('/profile', [ProfileController::class, 'show'])->name('pages.profile');
+    // Route::get('/settings', [SettingsController::class, 'edit'])->name('pages.settings');
+    // Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
+
 });
+
+
+
 
 

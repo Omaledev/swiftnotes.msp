@@ -8,7 +8,7 @@
       @stack('styles')
   </head>
   <body class="bg-gray-100 min-h-screen flex flex-col">
-        <header>
+        <header class="shadow-md mx-1">
             @include('layouts.header')
         </header>
 
@@ -16,10 +16,14 @@
             @yield('content')
         </main>
 
-        <footer>
+        <footer class="bg-gray-800 text-white py-4 mt-auto mx-1">
             @include('layouts.footer')
         </footer>
 
         @stack('scripts')
   </body>
 </html>
+
+
+
+

@@ -37,7 +37,7 @@
                     Cancel
                 </a>
                 <button type="submit"
-                        class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                        class="px-4 py-2 bg-blue-500 text-white cursor-pointer rounded-md hover:bg-blue-600">
                     Create Team
                 </button>
             </div>

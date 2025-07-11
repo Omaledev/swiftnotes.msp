@@ -12,13 +12,12 @@ use Illuminate\Support\Facades\Auth;
 
 class CreateTeamController extends Controller
 {
-
     public function createTeam()
     {
         return view('teams.create');
     }
 
-    
+
     public function createTeams(Request $request)
     {
         try {
@@ -28,7 +27,7 @@ class CreateTeamController extends Controller
 
             $userId = Auth::id();
 
-            DB::transaction(function () use ($validated, $userId) {
+            $team = DB::transaction(function () use ($validated, $userId) {
                 $team = Team::create([
                     'name' => $validated['name'],
                     'invite_code' => 'TEAM-' . Str::upper(Str::random(6)),
@@ -36,11 +35,16 @@ class CreateTeamController extends Controller
                 ]);
 
                 $team->members()->attach($userId, ['role' => 'owner']);
+                return $team;
             });
 
             return redirect()
                 ->route('dashboard')
-                ->with('success', 'Team created successfully!');
+                ->with([
+                    'success' => 'Team "'.$team->name.'" created successfully!',
+                    'invite_code' => $team->invite_code,
+                    'current_team' => $team
+            ]);
 
         } catch (ValidationException $e) {
             return back()
@@ -49,7 +53,7 @@ class CreateTeamController extends Controller
 
         } catch (Exception $e) {
             return back()
-                ->with('error', $e->getMessage())
+                ->with('error', 'Failed to create team: '.$e->getMessage())
                 ->withInput();
         }
     }
