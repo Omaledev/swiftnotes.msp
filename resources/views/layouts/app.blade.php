@@ -8,7 +8,7 @@
       @stack('styles')
   </head>
   <body class="bg-gray-100 min-h-screen flex flex-col">
-        <header class="shadow-md mx-1">
+        <header class="shadow-md mx-1 sticky top-0 z-50">
             @include('layouts.header')
         </header>
 
@@ -21,6 +21,7 @@
         </footer>
 
         @stack('scripts')
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
   </body>
 </html>
 
