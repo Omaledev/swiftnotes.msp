@@ -65,8 +65,7 @@ class AuthController extends Controller
             $request->session()->put('current_team', $user->createdTeams->first());
           }
 
-           return redirect()->intended('dashboard')
-           ->with('success', 'You have successfully login!');
+          return redirect()->intended('dashboard')->with('login_success', 'You have successfully logged in!');
         }
 
         return back()

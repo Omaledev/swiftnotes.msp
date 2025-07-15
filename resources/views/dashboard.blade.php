@@ -4,45 +4,55 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8">
-        {{-- Success Message with Invite Code --}}
+        @if (session('login_success'))
+            <div x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 3000)"
+                class="mb-4 p-3 bg-green-50 border-l-4 border-green-500 rounded-lg">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800">
+                            {{ session('login_success') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         @if (session('success') || (auth()->user()->createdTeams->count() > 0 && !session('invite_shown')))
             @php
                 $team = session('current_team') ?? auth()->user()->createdTeams->first();
             @endphp
 
-            @if($team) <!-- Only show if $team exists -->
-                <div class="mb-8 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
+            @if ($team)
+                <!-- Simple success message (like login) -->
+                <div x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 3000)"
+                    class="mb-4 p-3 bg-green-50 border-l-4 border-green-500 rounded-lg">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            <svg class="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd" />
                             </svg>
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-medium text-green-800">
-                                {{ session('success') ?? 'Your team information' }}
+                                {{ session('success') ?? 'Team created successfully!' }}
                             </p>
-                            <div class="mt-4">
-                                <p class="text-sm font-bold text-green-800">Invite Code:</p>
-                                <div class="mt-1 flex rounded-md shadow-sm">
-                                    <input type="text" value="{{ $team->invite_code }}" id="inviteCode"
-                                        class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-l-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                        readonly>
-                                    <button onclick="copyInviteCode()"
-                                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                        Copy
-                                    </button>
-                                </div>
-                                <p class="mt-1 text-sm text-green-700">Share this code with team members so they can join.</p>
-                            </div>
                         </div>
                     </div>
                 </div>
-                @php
-                    session(['invite_shown' => true]);
-                @endphp
             @endif
         @endif
+
 
         <div class="mb-8 flex flex-col sm:flex-row flex-wrap gap-4">
             <a href="{{ route('teams.create') }}"
@@ -101,9 +111,14 @@
                                                     Invite code:
                                                     <span class="flex items-center ml-1">
                                                         {{ $team->invite_code }}
-                                                        <button onclick="copyToClipboard(this, '{{ $team->invite_code }}')" class="ml-1 text-blue-500 hover:text-blue-700 cursor-pointer">
-                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                                                        <button onclick="copyToClipboard(this, '{{ $team->invite_code }}')"
+                                                            class="ml-1 text-blue-500 hover:text-blue-700 cursor-pointer">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3">
+                                                                </path>
                                                             </svg>
                                                         </button>
                                                     </span>
@@ -183,7 +198,6 @@
             </div>
         @endif
     </div>
-    </div>
 
     <script>
         function copyInviteCode() {
@@ -210,23 +224,22 @@
         }
 
         function copyToClipboard(button, text) {
-        navigator.clipboard.writeText(text).then(() => {
-            // Change icon to checkmark temporarily
-            const originalHTML = button.innerHTML;
-            button.innerHTML = `
+            navigator.clipboard.writeText(text).then(() => {
+                // Change icon to checkmark temporarily
+                const originalHTML = button.innerHTML;
+                button.innerHTML = `
                 <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
             `;
 
-            // Revert back after 2 seconds
+                // Revert back after 2 seconds
                 setTimeout(() => {
                     button.innerHTML = originalHTML;
-                    }, 2000);
+                }, 2000);
             }).catch(err => {
                 console.error('Failed to copy text: ', err);
             });
         }
-
     </script>
 @endsection

@@ -2,6 +2,36 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8">
+         <!-- Team Invite Code Section (show to team members) -->
+        @if($team)
+            <div class="mb-8 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800">
+                            Your team invite code:
+                        </p>
+                        <div class="mt-4">
+                            <p class="text-sm font-bold text-green-800">Invite Code:</p>
+                            <div class="mt-1 flex rounded-md shadow-sm">
+                                <input type="text" value="{{ $team->invite_code }}" id="inviteCode"
+                                    class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-l-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    readonly>
+                                <button onclick="copyInviteCode()"
+                                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    Copy
+                                </button>
+                            </div>
+                            <p class="mt-1 text-sm text-green-700">Share this code with team members so they can join.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
         <!-- Header Section -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <div>
@@ -49,13 +79,17 @@
         </div>
 
         @if (session('success'))
-            <div class="mb-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded">
+            <div x-data="{ show: true }"
+                x-show="show"
+                x-transition
+                x-init="setTimeout(() => show = false, 3000)"
+                class="mb-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded">
                 <div class="flex items-center">
                     <i class="fas fa-check-circle mr-2"></i>
                     {{ session('success') }}
                 </div>
             </div>
-        @endif
+            @endif
 
         <!-- Notes Grid -->
         @if ($notes->count() > 0)
@@ -175,4 +209,27 @@
             </div>
         </div>
     </div>
+    <script>
+        function copyInviteCode() {
+            const inviteCode = document.getElementById('inviteCode');
+            inviteCode.select();
+            document.execCommand('copy');
+
+            // Show a notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg flex items-center';
+            notification.innerHTML = `
+                <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                Invite code copied!
+            `;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        }
+    </script>
 @endsection
