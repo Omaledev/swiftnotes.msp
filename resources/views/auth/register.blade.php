@@ -16,8 +16,10 @@
     </style>
 </head>
 
-<body class="bg-gray-100">
-    <div class="min-h-screen flex items-center justify-center p-3 bg-no-repeat bg-cover bg-center">
+<bod>
+    <div class="min-h-screen flex items-center justify-center p-3"
+        style="background-image: url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80'); background-size: cover; background-position: center;">
+        
         <!-- Compact container for 320px devices -->
         <div class="w-full max-w-[280px] sm:max-w-xs md:max-w-sm mx-auto bg-white rounded-lg shadow-md overflow-hidden">
             <form id="registrationForm" method="POST" action="{{ route('register') }}">
