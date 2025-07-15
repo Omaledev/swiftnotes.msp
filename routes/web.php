@@ -8,10 +8,13 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CreateTeamController;
 use App\Http\Controllers\JoinTeamController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\DeleteTeamController;
+use App\Http\Controllers\ShowMembersController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
+
 
 
 // register,login and logout routes
@@ -35,6 +38,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/teams/join', [JoinTeamController::class, 'joinTeam'])->name('teams.join');
     Route::post('/teams/join', [JoinTeamController::class, 'joinTeams'])->name('teams.join.store');
+    Route::delete('/teams/{team}', [DeleteTeamController::class, 'destroy'])->name('teams.destroy');
+
+    Route::get('/teams/{team}/members', [ShowMembersController::class, 'showMembers'])->name('teams.members');
+    Route::delete('/teams/{team}/members/{user}', [ShowMembersController::class, 'removeMember'])->name('teams.members.remove');
 
     // Notes routes
     Route::get('/teams/{team}/notes', [NoteController::class, 'index'])->name('notes.index');

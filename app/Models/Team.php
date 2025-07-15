@@ -11,9 +11,9 @@ class Team extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'name',          
-        'invite_code',   
-        'created_by'     
+        'name',
+        'invite_code',
+        'created_by'
     ];
 
     protected $appends = ['joined_at'];
@@ -26,7 +26,15 @@ class Team extends Model
         return null;
     }
 
-   
+    protected static function booted()
+    {
+        static::deleting(function ($team) {
+            $team->notes()->delete();
+            $team->members()->detach();
+        });
+    }
+
+
     public function members() {
         return $this->belongsToMany(User::class, 'team_members')
         ->withPivot('role');
@@ -40,5 +48,5 @@ class Team extends Model
         return $this->hasMany(Note::class);
     }
 
-    
+
 }
