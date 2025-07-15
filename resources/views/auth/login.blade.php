@@ -18,18 +18,28 @@
     </style>
 </head>
 
-<body class="bg-gray-100">
+<body>
+
     @if (session('status'))
         <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
             {{ session('status') }}
         </div>
     @endif
-    <div class="min-h-screen flex items-center justify-center p-3 bg-no-repeat bg-cover bg-center">
+
+    <!-- Smooth blue gradient that matches your color scheme -->
+    <div class="min-h-screen flex items-center justify-center p-3"
+        style="background-image: url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80'); background-size: cover; background-position: center;">
+
         <!-- Tight container for 320px devices -->
         <div class="w-full max-w-[280px] sm:max-w-xs md:max-w-sm mx-auto bg-white rounded-lg shadow-md overflow-hidden">
             <form id="loginForm" method="POST" action="{{ route('login') }}">
                 @csrf
                 <div class="px-3 py-4 sm:px-4 sm:py-6">
+
+                    <h1
+                        class="text-center text-gray-600 font-bold tracking-wider text-xl sm:text-2xl md:text-3xl uppercase mb-2 sm:mb-3 transform transition-all hover:scale-105">
+                        SWIFT<span class="text-amber-300">NOTES</span>
+                    </h1>
                     <!-- Compact divider -->
                     <div class="flex items-center justify-center mb-4 sm:mb-5">
                         <div class="flex-1 border-t border-gray-300"></div>

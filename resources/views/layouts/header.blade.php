@@ -57,7 +57,7 @@
                 @auth
                 <form method="POST" action="{{ route('logout') }}" class="ml-2">
                     @csrf
-                    <button type="submit" class="text-sm text-white hover:text-amber-300 transition-colors">
+                    <button type="submit" class="text-sm text-white hover:text-amber-300 transition-colors cursor-pointer">
                         Logout
                     </button>
                 </form>
@@ -102,13 +102,13 @@
         <!-- Mobile menu -->
         <div class="hidden w-full md:hidden mt-2" id="mobile-menu">
             <!-- Welcome message on same line with menu items -->
-            <div class="flex items-center justify-between px-3 py-2 bg-blue-700 rounded-t-lg">
+            {{-- <div class="flex items-center justify-between px-3 py-2 bg-blue-700 rounded-t-lg">
                 @auth
                     <span class="text-sm font-bold text-amber-300 truncate max-w-[50%]">
                         Welcome, {{ Auth::user()->name }}
                     </span>
                 @endauth
-            </div>
+            </div> --}}
 
             <ul class="flex flex-col p-2 font-medium border border-gray-100 rounded-b-lg bg-blue-700">
                 <li>

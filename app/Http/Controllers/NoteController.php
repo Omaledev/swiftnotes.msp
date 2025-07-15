@@ -12,7 +12,12 @@ class NoteController extends Controller
 {
     public function index(Team $team)
     {
-        $notes = $team->notes()->with(['creator', 'activeEditors'])->latest()->get();
+        // $notes = $team->notes()->with(['creator', 'activeEditors'])->latest()->get();
+
+         $notes = $team->notes()
+                ->with(['creator', 'activeEditors'])
+                ->latest()
+                ->paginate(10);  // Changed from get() to paginate(10)
         $user = Auth::user();
         $isOwner = $team->created_by === $user->id;
         $memberCount = $team->members()->count();
