@@ -7,6 +7,10 @@ use App\Models\Team;
 use App\Models\NoteSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Events\NoteCreated;
+use App\Events\NoteUpdated;
+use App\Events\UserEditingNote;
+use App\Events\UserStoppedEditingNote;
 
 class NoteController extends Controller
 {
@@ -43,6 +47,8 @@ class NoteController extends Controller
             'team_id' => $team->id,
             'created_by' => Auth::id()
         ]);
+         
+        broadcast(new NoteCreated($note))->toOthers();
 
         return redirect()->route('notes.index', $team)
             ->with('success', 'Note created successfully!');
@@ -69,11 +75,13 @@ class NoteController extends Controller
 
         $note->update($request->only(['title', 'content']));
 
+        broadcast(new NoteUpdated($note))->toOthers();
+
         return back()->with('success', 'Note updated successfully!');
     }
 
     public function destroy(Note $note)
-{
+    {
     
     if (Auth::id() !== $note->created_by && Auth::id() !== $note->team->created_by) {
         abort(403, 'Unauthorized action.');
@@ -88,12 +96,14 @@ class NoteController extends Controller
     public function startEditing(Note $note)
     {
         $note->activeEditors()->syncWithoutDetaching([Auth::id() => ['active_at' => now()]]);
+        broadcast(new UserEditingNote($note, Auth::user()))->toOthers();
         return back();
     }
 
     public function stopEditing(Note $note)
     {
         $note->activeEditors()->detach(Auth::id());
+        broadcast(new UserStoppedEditingNote($note, Auth::user()))->toOthers();
         return back();
     }
 }

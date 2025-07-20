@@ -2,7 +2,16 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserStatusController;
+use Illuminate\Support\Facades\Broadcast;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// CSRF Cookie
+Route::post('/sanctum/csrf-cookie', fn () => response()->noContent());
+
+// Authenticated Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/user-online', [UserStatusController::class, 'updateOnlineStatus']);
+});
+
+// Broadcast Routes (auto-includes CORS)
+Broadcast::routes(['middleware' => 'auth:sanctum']);

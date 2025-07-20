@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -70,13 +71,14 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         return $this->hasMany(Note::class, 'created_by');
     }
 
-    public function activeNotes()
-     {
+    public function activeNotes() {
     return $this->belongsToMany(Note::class, 'notes_session')
                ->using(NoteSession::class)
                ->withPivot('active_at');
+    }
 
-
-
+    public function isOnline()
+    {
+     return Cache::has('user-is-online-' . $this->id);
     }
 }

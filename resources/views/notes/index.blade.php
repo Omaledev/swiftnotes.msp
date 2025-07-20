@@ -22,7 +22,7 @@
                                     class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-l-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                     readonly>
                                 <button onclick="copyInviteCode()"
-                                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer">
                                     Copy
                                 </button>
                             </div>
@@ -47,9 +47,9 @@
                         placeholder="Search notes..." value="{{ request('search') }}">
 
                     <button type="submit" aria-label="Search notes"
-                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-md hover:shadow-lg">
+                        class="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-md hover:shadow-lg cursor-pointer">
                         <i class="fas fa-search" aria-hidden="true"></i>
-                        <span>Search</span>
+                        <span class="hidden xs:inline">Search</span>
                     </button>
                 </form>
 
@@ -72,10 +72,34 @@
                 </span>
             @endif
 
-            <a href="{{ route('teams.members', $team) }}"
+            {{-- <a href="{{ route('teams.members', $team) }}"
                 class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs sm:text-sm font-medium hover:bg-blue-200 flex items-center gap-1 whitespace-nowrap">
                 <i class="fas fa-users text-xs sm:text-sm"></i> <span>{{ $memberCount }} Members</span>
-            </a>
+            </a> --}}
+
+            <!-- New dropdown for member list with online status -->
+            <div class="relative group">
+                <a href="{{ route('teams.members', $team) }}"
+                    class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs sm:text-sm font-medium hover:bg-blue-200 flex items-center gap-1 whitespace-nowrap">
+                    <i class="fas fa-users text-xs sm:text-sm"></i>
+                    <span>{{ $memberCount }} Members</span>
+                </a>
+
+                <!-- Dropdown with member status -->
+                <div class="absolute hidden group-hover:block bg-white shadow-lg rounded-lg p-3 min-w-[200px] z-10 mt-1 border border-gray-200">
+                    <h4 class="font-medium text-gray-800 mb-2">Team Members</h4>
+                    @foreach($team->members as $member)
+                    <div class="flex items-center mb-2" data-user-id="{{ $member->id }}">
+                        <span class="user-status inline-block w-2 h-2 rounded-full mr-2 {{ $member->isOnline() ? 'bg-green-500' : 'bg-gray-400' }}"></span>
+                        <span>{{ $member->name }}</span>
+                        @if($member->id === $team->created_by)
+                            <span class="ml-2 text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded">Owner</span>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            <!-- End of dropdown -->
 
             @if ($isOwner)
                 <form action="{{ route('teams.destroy', $team) }}" method="POST">
@@ -142,7 +166,7 @@
                                             @csrf @method('DELETE')
                                             <button type="submit"
                                                 onclick="return confirm('Are you sure you want to delete this note?')"
-                                                class="p-2 text-red-600 hover:text-red-800 rounded-full hover:bg-red-50">
+                                                class="p-2 text-red-600 hover:text-red-800 rounded-full hover:bg-red-50 cursor-pointer">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -243,5 +267,15 @@
                 setTimeout(() => notification.remove(), 300);
             }, 2000);
         }
+
+        // for real-time event
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize real-time features with team ID
+            initializeRealTimeFeatures({{ $team->id }});
+
+            // Store current user data
+            window.user = @json(auth()->user());
+        });
+
     </script>
 @endsection
