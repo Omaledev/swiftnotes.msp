@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8">
-        <!-- Header Section (unchanged) -->
+        <!-- Header Section  -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
 
             <div>
@@ -38,6 +38,7 @@
                 </div>
             </div>
         @endif
+
 
         <!-- Note Content with Action Buttons -->
         {{-- <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
@@ -78,7 +79,7 @@
     <div class="p-6">
         <!-- Flex container - column on mobile, row on desktop -->
         <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-            
+
             <!-- Note Content with beautiful typography -->
             <div class="prose max-w-none w-full md:flex-grow">
                 <div class="text-[17px] leading-[1.7] tracking-wide font-medium antialiased"
@@ -228,6 +229,28 @@
                     });
                 }
             });
+
+
+        // for real-time event
+         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize real-time features with both team and note IDs
+            initializeRealTimeFeatures({{ $note->team->id }}, {{ $note->id }});
+
+            // Store current user data
+            window.user = @json(auth()->user());
+
+            // Track editing status for this note
+            const textarea = document.querySelector('textarea[name="content"]');
+            if (textarea) {
+                textarea.addEventListener('focus', () => {
+                    axios.post(`/notes/{{ $note->id }}/start-editing`);
+                });
+
+                textarea.addEventListener('blur', () => {
+                    axios.post(`/notes/{{ $note->id }}/stop-editing`);
+                });
+            }
+        });
         </script>
     @endpush
 @endsection

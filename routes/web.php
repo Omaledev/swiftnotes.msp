@@ -50,7 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/notes/{note}', [NoteController::class, 'update'])->name('notes.update');
     Route::delete('/notes/{note}', [NoteController::class, 'destroy'])->name('notes.destroy');
 
-    // Live editing tracking
+     // Live editing tracking
     Route::post('/notes/{note}/start-editing', [NoteController::class, 'startEditing']);
     Route::post('/notes/{note}/stop-editing', [NoteController::class, 'stopEditing']);
 
