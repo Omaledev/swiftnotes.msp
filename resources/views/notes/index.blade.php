@@ -63,19 +63,14 @@
 
         <div class="mb-6 flex flex-wrap items-center gap-2">
             @if ($isOwner)
-                <span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs sm:text-sm font-medium flex items-center gap-1 whitespace-nowrap">
+                <span class="px-1 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs sm:text-sm font-medium flex items-center gap-1 whitespace-nowrap">
                     <i class="fas fa-crown text-xs sm:text-sm"></i> <span>Team Owner</span>
                 </span>
             @else
-                <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs sm:text-sm font-medium flex items-center gap-1 whitespace-nowrap">
+                <span class="px-1 py-1 bg-gray-100 text-gray-800 rounded-full text-xs sm:text-sm font-medium flex items-center gap-1 whitespace-nowrap">
                     <i class="fas fa-user text-xs sm:text-sm"></i> <span>Team Member</span>
                 </span>
             @endif
-
-            {{-- <a href="{{ route('teams.members', $team) }}"
-                class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs sm:text-sm font-medium hover:bg-blue-200 flex items-center gap-1 whitespace-nowrap">
-                <i class="fas fa-users text-xs sm:text-sm"></i> <span>{{ $memberCount }} Members</span>
-            </a> --}}
 
             <!-- New dropdown for member list with online status -->
             <div class="relative group">
@@ -107,8 +102,8 @@
                     @method('DELETE')
                     <button type="submit"
                             onclick="return confirm('WARNING: This will permanently delete the team and ALL its notes. Continue?')"
-                            class="px-2 py-1 bg-red-600 text-white rounded-full text-xs sm:text-sm font-medium hover:bg-red-700 flex items-center gap-1 whitespace-nowrap cursor-pointer">
-                        <i class="fas fa-trash-alt text-xs sm:text-sm"></i> <span>Delete Team</span>
+                            class="px-1 py-1 bg-red-600 text-white rounded-full text-xs sm:text-sm font-medium hover:bg-red-700 flex items-center gap-1 whitespace-nowrap cursor-pointer">
+                        <i class="fas fa-trash-alt text-xs sm:text-sm"></i><span>Delete Team</span>
                     </button>
                 </form>
             @endif

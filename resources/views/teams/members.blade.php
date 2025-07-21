@@ -7,7 +7,7 @@
         <div class="flex justify-between items-center mb-8">
             <h1 class="text-2xl font-bold text-gray-800">{{ $team->name }} Members</h1>
             <a href="{{ route('notes.index', $team) }}"
-            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+            class="whitespace-nowrap px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm md:text-base">
                 Back to Notes
             </a>
         </div>

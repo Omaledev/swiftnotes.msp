@@ -39,44 +39,6 @@
             </div>
         @endif
 
-
-        <!-- Note Content with Action Buttons -->
-        {{-- <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
-            <div class="p-6">
-                <div class="flex items-start justify-between gap-4">
-                    <!-- Note Content - Aligned to start -->
-                    <div class="prose max-w-none flex-grow">
-                        {!! nl2br(e($note->content)) !!}
-                    </div>
-
-                    <!-- More Visible Action Buttons -->
-                    @if ($note->team->members->contains(Auth::user()))
-                        <div class="flex space-x-3 ml-4">
-                            <button onclick="toggleEditForm()"
-                                class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors flex items-center gap-2 shadow-sm cursor-pointer"
-                                title="Edit Note">
-                                <i class="fas fa-edit"></i>
-                                <span class="text-sm font-medium">Edit</span>
-                            </button>
-                            @if ($canDelete)
-                                <button onclick="confirmDelete()"
-                                    class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors flex items-center gap-2 shadow-sm cursor-pointer"
-                                    title="Delete Note">
-                                    <i class="fas fa-trash"></i>
-                                    <span class="text-sm font-medium">Delete</span>
-                                </button>
-                            @endif
-                        </div>
-                    @endif
-
-
-
-                </div>
-            </div>
-        </div> --}}
-
-        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
-    <div class="p-6">
         <!-- Flex container - column on mobile, row on desktop -->
         <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
 
@@ -109,11 +71,9 @@
             @endif
         </div>
     </div>
-</div>
 
-
-        <!-- Edit Section (hidden by default) -->
-        @if ($note->team->members->contains(Auth::user()))
+    <!-- Edit Section (hidden by default) -->
+    @if ($note->team->members->contains(Auth::user()))
             <div id="editFormContainer" class="bg-white rounded-xl shadow-md overflow-hidden hidden">
                 <div class="p-6 border-b border-gray-200">
                     <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
@@ -148,10 +108,10 @@
                     </form>
                 </div>
             </div>
-        @endif
+    @endif
 
-        <!-- Delete Confirmation Modal -->
-        <div id="deleteModal" class="fixed inset-0 z-50 hidden">
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="fixed inset-0 z-50 hidden">
             <!-- Centering Wrapper -->
             <div class="flex items-center justify-center w-full h-full">
                 <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
@@ -174,7 +134,6 @@
                     </div>
                 </div>
             </div>
-        </div>
     </div>
 
     @push('scripts')
