@@ -11,7 +11,7 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\DeleteTeamController;
 use App\Http\Controllers\ShowMembersController;
 use App\Http\Controllers\ChatController;
-use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CollaboratorsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
 
@@ -54,14 +54,39 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/notes/{note}/start-editing', [NoteController::class, 'startEditing']);
     Route::post('/notes/{note}/stop-editing', [NoteController::class, 'stopEditing']);
 
+
+     // Settings Routes
+    Route::prefix('settings')->group(function () {
+        Route::get('/', [SettingsController::class, 'index'])->name('pages.settings');
+        Route::post('/name', [SettingsController::class, 'updateName'])->name('settings.name.update');
+        Route::post('/email', [SettingsController::class, 'updateEmail'])->name('settings.email.update');
+        Route::get('/email/verify/{token}', [SettingsController::class, 'verifyEmailChange'])
+         ->name('email.change.verify');
+        Route::post('/password', [SettingsController::class, 'updatePassword'])->name('settings.password.update');
+        Route::put('/teams/{team}', [SettingsController::class, 'updateTeamName'])->name('settings.team.update');
+        Route::post('/account/delete', [SettingsController::class, 'deleteAccount'])->name('settings.account.delete');
+        Route::delete('/settings/teams/{team}', [SettingsController::class, 'deleteTeam'])->name('settings.team.delete');
+        Route::post('/settings/teams/{team}/leave', [SettingsController::class, 'leaveTeam'])->name('settings.team.leave');
+    });
+
     // Navigation Features
     // Route::get('/chat', [ChatController::class, 'index'])->name('pages.chat');
-    // Route::get('/contacts', [ContactController::class, 'index'])->name('pages.contact');
+    Route::get('/collaborators', [CollaboratorsController::class, 'index'])
+       ->name('pages.collaborators');
     // Route::get('/profile', [ProfileController::class, 'show'])->name('pages.profile');
     // Route::get('/settings', [SettingsController::class, 'edit'])->name('pages.settings');
     // Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
 
+    // Route::prefix('messages')->group(function () {
+    // Route::get('/create/{recipient}', [MessageController::class, 'create'])
+    //     ->name('messages.create');
+    // Route::post('/', [MessageController::class, 'store'])
+    //     ->name('messages.store');
+    //  });
+
 });
+
+
 
 
 

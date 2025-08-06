@@ -22,16 +22,16 @@
             <!-- Menu Items -->
             <ul class="flex space-x-6 font-medium">
                 <li>
+                    <a href="{{ route('dashboard') }}" class="block py-2 px-0 text-white hover:text-amber-300 transition-colors">Home</a>
+                </li>
+                <li>
                     <a href="#" class="block py-2 px-0 text-white hover:text-amber-300 transition-colors">Chats</a>
                 </li>
                 <li>
-                    <a href="#" class="block py-2 px-0 text-white hover:text-amber-300 transition-colors">Contacts</a>
+                    <a href="{{ route('pages.collaborators') }}" class="block py-2 px-0 text-white hover:text-amber-300 transition-colors">Collaborators</a>
                 </li>
                 <li>
-                    <a href="#" class="block py-2 px-0 text-white hover:text-amber-300 transition-colors">Profile</a>
-                </li>
-                <li>
-                    <a href="#" class="block py-2 px-0 text-white hover:text-amber-300 transition-colors">Setting</a>
+                    <a href="{{ route('pages.settings') }}" class="block py-2 px-0 text-white hover:text-amber-300 transition-colors">Setting</a>
                 </li>
             </ul>
 
@@ -108,17 +108,17 @@
                         Welcome, {{ Auth::user()->name }}
                     </span>
                 @endauth
-            </div> --}}
+            </div>  --}}
 
             <ul class="flex flex-col p-2 font-medium border border-gray-100 rounded-b-lg bg-blue-700">
+                <li>
+                    <a href="#" class="block py-2 px-3 text-white rounded hover:bg-amber-300">Home</a>
+                </li>
                 <li>
                     <a href="#" class="block py-2 px-3 text-white rounded hover:bg-amber-300">Chats</a>
                 </li>
                 <li>
-                    <a href="#" class="block py-2 px-3 text-white rounded hover:bg-amber-300">Contacts</a>
-                </li>
-                <li>
-                    <a href="#" class="block py-2 px-3 text-white rounded hover:bg-amber-300">Profile</a>
+                    <a href="#" class="block py-2 px-3 text-white rounded hover:bg-amber-300">Collaborators</a>
                 </li>
                 <li>
                     <a href="#" class="block py-2 px-3 text-white rounded hover:bg-amber-300">Setting</a>
