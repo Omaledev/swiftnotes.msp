@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Note;
 use App\Models\Team;
-use App\Models\NoteSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Events\NoteCreated;
@@ -14,23 +13,55 @@ use App\Events\UserStoppedEditingNote;
 
 class NoteController extends Controller
 {
+    // public function index(Team $team)
+    // {
+    //     // $notes = $team->notes()->with(['creator', 'activeEditors'])->latest()->get();
+
+    //      $notes = $team->notes()
+    //             ->with(['creator', 'activeEditors'])
+    //             ->latest()
+    //             ->paginate(10);
+    //     $user = Auth::user();
+    //     $isOwner = $team->created_by === $user->id;
+    //     $memberCount = $team->members()->count();
+
+    //     return view('notes.index', [
+    //         'team' => $team,
+    //         'notes' => $notes,
+    //         'isOwner' => $isOwner,
+    //         'memberCount' => $memberCount
+    //     ]);
+    // }
     public function index(Team $team)
     {
-        // $notes = $team->notes()->with(['creator', 'activeEditors'])->latest()->get();
+        // Getting search term from request
+        $search = request('search');
 
-         $notes = $team->notes()
-                ->with(['creator', 'activeEditors'])
-                ->latest()
-                ->paginate(10);  // Changed from get() to paginate(10)
-        $user = Auth::user();
-        $isOwner = $team->created_by === $user->id;
+        // Query notes with optional search
+        $notes = $team->notes()
+            ->when($search, function($query) use ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('content', 'like', "%{$search}%");
+                });
+            })
+            ->with(['creator', 'activeEditors'])
+            ->latest()
+            ->paginate(10)
+            ->appends(['search' => $search]); // Preserve search in pagination
+
+        // Get team ownership status
+        $isOwner = $team->created_by === Auth::id();
+
+        // Get member count
         $memberCount = $team->members()->count();
 
         return view('notes.index', [
             'team' => $team,
             'notes' => $notes,
             'isOwner' => $isOwner,
-            'memberCount' => $memberCount
+            'memberCount' => $memberCount,
+            'searchTerm' => $search
         ]);
     }
 
@@ -47,7 +78,7 @@ class NoteController extends Controller
             'team_id' => $team->id,
             'created_by' => Auth::id()
         ]);
-         
+
         broadcast(new NoteCreated($note))->toOthers();
 
         return redirect()->route('notes.index', $team)
@@ -82,7 +113,7 @@ class NoteController extends Controller
 
     public function destroy(Note $note)
     {
-    
+
     if (Auth::id() !== $note->created_by && Auth::id() !== $note->team->created_by) {
         abort(403, 'Unauthorized action.');
     }
@@ -106,4 +137,5 @@ class NoteController extends Controller
         broadcast(new UserStoppedEditingNote($note, Auth::user()))->toOthers();
         return back();
     }
+
 }
