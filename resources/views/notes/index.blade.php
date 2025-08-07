@@ -122,6 +122,18 @@
             </div>
             @endif
 
+
+            @if(request('search'))
+                <div class="mb-4 p-3 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
+                    <p class="text-sm font-medium text-blue-800">
+                        Showing results for: "<span class="font-bold">{{ request('search') }}</span>"
+                        <a href="{{ route('notes.index', $team) }}" class="text-blue-600 hover:text-blue-800 ml-2">
+                            (Clear search)
+                        </a>
+                    </p>
+                </div>
+            @endif
+
         <!-- Notes Grid -->
         @if ($notes->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -182,7 +194,7 @@
                 @endforeach
             </div>
         @else
-            <div class="text-center py-12">
+            {{-- <div class="text-center py-12">
                 <div class="mx-auto w-24 h-24 text-gray-400 mb-4">
                     <i class="fas fa-sticky-note text-6xl"></i>
                 </div>
@@ -195,11 +207,37 @@
                         Create Note
                     </button>
                 </div>
+            </div> --}}
+
+             <!-- Empty State Section -->
+            <div class="text-center py-12">
+                <div class="mx-auto w-24 h-24 text-gray-400 mb-4">
+                    <i class="fas fa-sticky-note text-6xl"></i>
+                </div>
+                @if(request('search'))
+                    <h3 class="text-lg font-medium text-gray-900">No notes found for "{{ request('search') }}"</h3>
+                    <p class="mt-1 text-sm text-gray-500">Try a different search term.</p>
+                @else
+                    <h3 class="text-lg font-medium text-gray-900">No notes yet</h3>
+                    <p class="mt-1 text-sm text-gray-500">Get started by creating your first team note.</p>
+                @endif
+                <div class="mt-6">
+                    <button
+                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
+                        data-bs-toggle="modal" data-bs-target="#createNoteModal">
+                        Create Note
+                    </button>
+                </div>
             </div>
-            <div class="mt-6">
+
+            {{-- <div class="mt-6">
                 {{ $notes->links() }}
+            </div> --}}
+            <div class="mt-6">
+                {{ $notes->appends(['search' => request('search')])->links() }}
             </div>
         @endif
+
 
         <!-- Create Note Modal -->
         <div class="modal fade my-5" id="createNoteModal" tabindex="-1" aria-hidden="true">

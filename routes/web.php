@@ -10,10 +10,10 @@ use App\Http\Controllers\JoinTeamController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\DeleteTeamController;
 use App\Http\Controllers\ShowMembersController;
-use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CollaboratorsController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ChatController;
 
 
 
@@ -54,7 +54,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/notes/{note}/start-editing', [NoteController::class, 'startEditing']);
     Route::post('/notes/{note}/stop-editing', [NoteController::class, 'stopEditing']);
 
-
+     // Navigation Features
      // Settings Routes
     Route::prefix('settings')->group(function () {
         Route::get('/', [SettingsController::class, 'index'])->name('pages.settings');
@@ -69,15 +69,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/settings/teams/{team}/leave', [SettingsController::class, 'leaveTeam'])->name('settings.team.leave');
     });
 
-    // Navigation Features
-    // Route::get('/chat', [ChatController::class, 'index'])->name('pages.chat');
     Route::get('/collaborators', [CollaboratorsController::class, 'index'])
        ->name('pages.collaborators');
-    // Route::get('/profile', [ProfileController::class, 'show'])->name('pages.profile');
-    // Route::get('/settings', [SettingsController::class, 'edit'])->name('pages.settings');
-    // Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
+    Route::get('/search', [SearchController::class, 'index'])->name('search');
 
-    // Route::prefix('messages')->group(function () {
+    // Route::get('/chat', [ChatController::class, 'index'])->name('pages.chat');
+     // Route::prefix('messages')->group(function () {
     // Route::get('/create/{recipient}', [MessageController::class, 'create'])
     //     ->name('messages.create');
     // Route::post('/', [MessageController::class, 'store'])
