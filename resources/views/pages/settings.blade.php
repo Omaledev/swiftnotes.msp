@@ -170,26 +170,26 @@
 
                         <div class="mt-6 space-y-4">
                             @foreach($ownedTeams as $team)
-                            <div class="flex items-center space-x-3">
-                                <form method="POST" action="{{ route('settings.team.update', $team->id) }}" class="flex-grow">
-                                    @csrf
-                                    @method('PUT')
-                                    <input type="text" name="name" value="{{ $team->name }}"
-                                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                                </form>
-                                <button type="submit" form="update-team-{{ $team->id }}"
-                                    class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer">
-                                    Update
-                                </button>
-                                <form method="POST" action="{{ route('settings.team.delete', $team->id) }}" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" onclick="return confirm('Are you sure you want to delete this team?')"
-                                        class="inline-flex items-center px-3 py-1.5 border border-red-300 shadow-sm text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 cursor-pointer">
-                                        Delete
+                                <div class="flex items-center space-x-3">
+                                    <form method="POST" action="{{ route('settings.team.update', $team->id) }}" class="flex-grow" id="update-team-{{ $team->id }}">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="text" name="name" value="{{ $team->name }}"
+                                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                    </form>
+                                    <button type="submit" form="update-team-{{ $team->id }}"
+                                        class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer">
+                                        Update
                                     </button>
-                                </form>
-                            </div>
+                                    <form method="POST" action="{{ route('settings.team.delete', $team->id) }}" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" onclick="return confirm('Are you sure you want to delete this team?')"
+                                            class="inline-flex items-center px-3 py-1.5 border border-red-300 shadow-sm text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 cursor-pointer">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
                             @endforeach
                         </div>
                     </div>
