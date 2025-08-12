@@ -28,7 +28,7 @@
                     Cancel
                 </a>
                 <button type="submit"
-                        class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">
+                        class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 cursor-pointer">
                     Join Team
                 </button>
             </div>

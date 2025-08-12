@@ -23,6 +23,9 @@ Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::get('/login', [AuthController::class, 'showlogin'])->name('auth.login');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])
+    ->name('auth.google.callback');
 
 // Forgot & reset Password routes
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
