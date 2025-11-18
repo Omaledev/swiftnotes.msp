@@ -1,0 +1,31 @@
+# render.yaml
+services:
+  - type: web
+    name: swiftnotes # Change this to your app's name!
+    env: php # This tells Render to use its PHP environment
+    plan: free # Starts on the free plan
+    region: ohio # or 'oregon', 'frankfurt'. Choose one closest to your users.
+
+    # The commands to build your application
+    buildCommand: |
+      composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+      npm ci --no-audit --no-fund # Clean install of npm dependencies
+      npm run build # Compile frontend assets
+      php artisan optimize:clear
+      php artisan optimize
+
+    # The command to start the PHP server
+    startCommand: "php -d variables_order=EGPCS -S 0.0.0.0:8000 public/index.php"
+
+    # These environment variables will be set for your application.
+    # You will add MORE (like APP_KEY and DB_*) in the Render dashboard later.
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_CHANNEL
+        value: stderr # This sends logs to Render's logging system
+
+    # Optional: Auto-run migrations after a successful build (use with caution!)
+    # postDeployCommand: "php artisan migrate --force"

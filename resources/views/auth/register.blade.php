@@ -125,6 +125,36 @@
             </div>
         </div>
     </div>
+
+    <script>
+    document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        try {
+            const response = await axios.post('/register', {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                password: formData.get('password'),
+                password_confirmation: formData.get('password_confirmation')
+            });
+            
+            // Handle successful registration
+            if (response.data?.token) {
+                localStorage.setItem('sanctum_token', response.data.token);
+            }
+            window.location.href = '/dashboard';
+        } catch (error) {
+            if (error.response?.status === 422) {
+                // Handle validation errors
+                const errors = error.response.data.errors;
+                // Update your error display logic here
+            } else {
+                console.error('Registration failed:', error);
+            }
+        }
+    });
+    </script>
 </body>
 
 </html>

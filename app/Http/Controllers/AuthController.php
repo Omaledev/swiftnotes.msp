@@ -61,16 +61,30 @@ class AuthController extends Controller
         if(auth::attempt($request->only(['email','password']), $request->remember)) {
            $request->session()->regenerate();
 
+           // Generate Sanctum token for API use
+        $token = $request->user()->createToken('auth_token')->plainTextToken;
 
-           // Get the authenticated user with the created teams
-             $user = Auth::user();
+        // For AJAX requests
+        if ($request->wantsJson()) {
+            return response()->json([
+                'token' => $token,
+                'user' => $request->user()
+            ]);
+        }
 
-              // Check if user has owned teams
+
+        // Get the authenticated user with the created teams
+            $user = Auth::user();
+
+            // Check if user has owned teams
              if ($user->createdTeams->count() > 0) {
             $request->session()->put('current_team', $user->createdTeams->first());
           }
 
-          return redirect()->intended('dashboard')->with('login_success', 'You have successfully logged in!');
+           // For traditional form submission
+          return redirect()->intended('dashboard')
+          ->with('login_success', 'You have successfully logged in!')
+          ->withCookie(cookie('sanctum_token', $token, 60*24*30)); // 30 days
         }
 
         return back()
@@ -82,61 +96,22 @@ class AuthController extends Controller
 
     // handling logout
     public function logout(request $request) {
+
+    // Revoke current token
+    if ($request->user()) {
+        $request->user()->currentAccessToken()->delete();
+    }
+
      auth::logout();
 
      $request->session()->invalidate();
      $request->session()->regenerateToken();
 
      return redirect()->route('login')
-     ->with('success', 'Logged out successfully');
+     ->with('success', 'Logged out successfully')
+     ->withoutCookie('sanctum_token');
     }
 
-    // Redirect to Google for authentication
-    // public function redirectToGoogle()
-    // {
-    //     return Socialite::driver('google')->redirect();
-    // }
-
-    // Handle Google callback
-    // public function handleGoogleCallback()
-    // {
-    //     try {
-    //         $googleUser = Socialite::driver('google')->user();
-
-    //         $user = User::where('email', $googleUser->getEmail())->first();
-
-    //         if (!$user) {
-    //             // Registration case
-    //             $user = User::create([
-    //                 'name' => $googleUser->getName(),
-    //                 'email' => $googleUser->getEmail(),
-    //                 'password' => Hash::make(Str::random(24)),
-    //                 'google_id' => $googleUser->getId(),
-    //                 'email_verified_at' => now(), // Google-verified emails can be marked as verified
-    //             ]);
-
-    //             Auth::login($user);
-    //             return redirect()->route('dashboard')
-    //                 ->with('success', 'Registration with Google successful!');
-    //         }
-
-    //         // Login case
-    //         if (empty($user->google_id)) {
-    //             // User exists but didn't use Google before - update their record
-    //             $user->update(['google_id' => $googleUser->getId()]);
-    //         }
-
-    //         Auth::login($user);
-    //         return redirect()->route('dashboard')
-    //             ->with('success', 'Logged in with Google!');
-
-    //     } catch (\Exception $e) {
-    //         return redirect()->route('login')
-    //             ->withErrors([
-    //                 'email' => 'Google authentication failed. Please try again.'
-    //             ]);
-    //     }
-    // }
 
     /**
      * Redirect to Google for authentication
@@ -192,10 +167,14 @@ class AuthController extends Controller
             }
 
             Auth::login($user);
+
+            $token = $user->createToken('google_token')->plainTextToken;
+
             return redirect()->route('dashboard')
                 ->with('success', $user->wasRecentlyCreated ?
                     'Google registration successful!' :
-                    'Google login successful!');
+                    'Google login successful!')
+                 ->withCookie(cookie('sanctum_token', $token, 60*24*30));
 
         } catch (\Exception $e) {
             Log::error('Google Auth Error: ' . $e->getMessage());

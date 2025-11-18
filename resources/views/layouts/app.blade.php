@@ -27,18 +27,29 @@
 
         @auth
             <script>
-                // window variables with null checks
+                // Initialize global variables
                 window.currentTeamId = {{ $team->id ?? 'null' }};
                 window.currentNoteId = {{ $note->id ?? 'null' }};
                 window.user = @json(auth()->user() ?? null);
                 window.PUSHER_APP_KEY = "{{ config('broadcasting.connections.pusher.key') }}";
                 window.PUSHER_APP_CLUSTER = "{{ config('broadcasting.connections.pusher.options.cluster') }}";
 
-                  // for debugging
-        console.log('Current team ID:', window.currentTeamId);
+                // Using global initialization system
+                if (window.initializeRealTimeFeatures) {
+                    window.initializeRealTimeFeatures(window.currentTeamId, window.currentNoteId)
+                        .catch(err => console.error('Real-time init error:', err));
+                } else {
+                    // Queue the initialization if function not available yet
+                    window._realTimeInitQueue = window._realTimeInitQueue || [];
+                    window._realTimeInitQueue.push({
+                        teamId: window.currentTeamId,
+                        noteId: window.currentNoteId,
+                        resolve: () => console.log('Real-time features initialized'),
+                        reject: (err) => console.error('Real-time init error:', err)
+                    });
+                }
             </script>
         @endauth
-
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         @stack('scripts')
@@ -46,7 +57,3 @@
         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   </body>
 </html>
-
-
-
-
