@@ -302,13 +302,22 @@
         }
 
         // for real-time event
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize real-time features with team ID
-            initializeRealTimeFeatures({{ $team->id }});
+         document.addEventListener('DOMContentLoaded', async function() {
+        // Wait for the module to load
+        if (typeof initializeRealTimeFeatures === 'function') {
+            await initializeRealTimeFeatures({{ $team->id }});
+        } else {
+            // Fallback: retry after a delay
+            setTimeout(async () => {
+                if (typeof initializeRealTimeFeatures === 'function') {
+                    await initializeRealTimeFeatures({{ $team->id }});
+                }
+            }, 1000);
+        }
 
-            // Store current user data
-            window.user = @json(auth()->user());
-        });
+        // Store current user data
+        window.user = @json(auth()->user());
+    });
 
     </script>
 @endsection

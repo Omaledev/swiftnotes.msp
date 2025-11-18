@@ -13,7 +13,7 @@ return [
                 'cluster' => env('PUSHER_APP_CLUSTER'),
                 'encrypted' => true,
                 'useTLS' => true,
-                'authEndpoint' => '/broadcasting/auth', // This is crucial
+                'authEndpoint' => '/api/broadcasting/auth', // This is crucial
             ],
         ],
 
@@ -26,3 +26,6 @@ return [
         ],
     ],
 ];
+
+
+

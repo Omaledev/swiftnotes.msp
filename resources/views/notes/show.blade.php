@@ -189,27 +189,34 @@
                 }
             });
 
+        document.addEventListener('DOMContentLoaded', async function() {
+        // Wait for the module to load
+        if (typeof initializeRealTimeFeatures === 'function') {
+            await initializeRealTimeFeatures({{ $note->team->id }}, {{ $note->id }});
+        } else {
+            // Fallback: retry after a delay
+            setTimeout(async () => {
+                if (typeof initializeRealTimeFeatures === 'function') {
+                    await initializeRealTimeFeatures({{ $note->team->id }}, {{ $note->id }});
+                }
+            }, 1000);
+        }
 
-        // for real-time event
-         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize real-time features with both team and note IDs
-            initializeRealTimeFeatures({{ $note->team->id }}, {{ $note->id }});
+        // Store current user data
+        window.user = @json(auth()->user());
 
-            // Store current user data
-            window.user = @json(auth()->user());
+        // Track editing status for this note
+        const textarea = document.querySelector('textarea[name="content"]');
+        if (textarea) {
+            textarea.addEventListener('focus', () => {
+                axios.post(`/notes/{{ $note->id }}/start-editing`);
+            });
 
-            // Track editing status for this note
-            const textarea = document.querySelector('textarea[name="content"]');
-            if (textarea) {
-                textarea.addEventListener('focus', () => {
-                    axios.post(`/notes/{{ $note->id }}/start-editing`);
-                });
-
-                textarea.addEventListener('blur', () => {
-                    axios.post(`/notes/{{ $note->id }}/stop-editing`);
-                });
-            }
-        });
+            textarea.addEventListener('blur', () => {
+                axios.post(`/notes/{{ $note->id }}/stop-editing`);
+            });
+        }
+    });
         </script>
     @endpush
 @endsection

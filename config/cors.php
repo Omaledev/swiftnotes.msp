@@ -7,7 +7,9 @@ return [
         'login',
         'logout',
         'broadcasting/auth', // Critical for Pusher
-        'user-online'       // custom endpoint
+        'api/broadcasting/auth',
+        'user-online',     // custom endpoint
+        'api/user-online'
     ],
 
     'allowed_methods' => ['*'],
