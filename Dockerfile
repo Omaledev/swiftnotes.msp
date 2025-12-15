@@ -12,8 +12,20 @@ ENV APP_DEBUG false
 ENV LOG_CHANNEL stderr
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
-# 3. FORCE Composer to install dependencies NOW (during build)
-# This prevents the "missing autoload.php" error
+# --- FIX FOR PUSHER ERROR ---
+# We set these to "log" or "void" so the build doesn't crash looking for real keys
+ENV BROADCAST_DRIVER log
+ENV BROADCAST_CONNECTION log
+ENV PUSHER_APP_KEY void
+ENV PUSHER_APP_ID void
+ENV PUSHER_APP_SECRET void
+ENV PUSHER_HOST void
+ENV PUSHER_PORT 443
+ENV PUSHER_SCHEME https
+ENV PUSHER_APP_CLUSTER mt1
+# ----------------------------
+
+# 3. FORCE Composer to install dependencies NOW
 RUN composer install --no-dev --optimize-autoloader
 
 # 4. Start the server
