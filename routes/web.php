@@ -16,7 +16,9 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ChatController;
 
 
-
+Route::get('/', function () {
+    return redirect()->route('auth.login');
+});
 // register,login and logout routes
 Route::get('/register', [AuthController::class, 'showregister'])->name('auth.register');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
