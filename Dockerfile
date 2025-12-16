@@ -12,7 +12,7 @@ ENV APP_DEBUG false
 ENV LOG_CHANNEL stderr
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
-# --- FIX FOR PUSHER ERROR (Kept exactly as you had it) ---
+# --- FIX FOR PUSHER ERROR ---
 ENV BROADCAST_DRIVER log
 ENV BROADCAST_CONNECTION log
 ENV PUSHER_APP_KEY void
@@ -24,14 +24,18 @@ ENV PUSHER_SCHEME https
 ENV PUSHER_APP_CLUSTER mt1
 # ----------------------------
 
-# 3. INSTALL NODE.JS & BUILD ASSETS (The New Part)
-# This fixes the "Vite manifest not found" error
+# 3. INSTALL NODE.JS & BUILD ASSETS
 RUN apk add --no-cache nodejs npm
 RUN npm install
 RUN npm run build
 
-# 4. Install PHP Dependencies (Kept exactly as you had it)
+# 4. Install PHP Dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# 5. Clear Caches & Start Server (Kept exactly as you had it)
+# --- 4.5 FIX NGINX ROUTING (THE NEW FIX) ---
+# This tells Nginx: "If the file isn't found, send it to index.php"
+RUN mkdir -p /var/www/html/conf/nginx && \
+    echo 'location / { try_files $uri $uri/ /index.php?$query_string; }' > /var/www/html/conf/nginx/nginx-site.conf
+
+# 5. Clear Caches & Start Server
 CMD ["/bin/sh", "-c", "php artisan route:clear && php artisan config:clear && php artisan view:clear && /start.sh"]
