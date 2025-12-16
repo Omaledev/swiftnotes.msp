@@ -28,5 +28,5 @@ ENV PUSHER_APP_CLUSTER mt1
 # 3. FORCE Composer to install dependencies NOW
 RUN composer install --no-dev --optimize-autoloader
 
-# 4. Start the server
-CMD ["/start.sh"]
+# Clear caches before starting the server
+CMD ["/bin/sh", "-c", "php artisan route:clear && php artisan config:clear && php artisan view:clear && /start.sh"]
