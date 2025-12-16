@@ -136,18 +136,19 @@ class AuthController extends Controller
     {
         try {
             // Configure HTTP client with SSL verification
-            $httpClient = new Client([
-                'verify' => $this->getCertificatePath()
-            ]);
+            // $httpClient = new Client([
+            //     'verify' => $this->getCertificatePath()
+            // ]);
 
-            /** @var GoogleProvider $driver */
-            $driver = Socialite::driver('google');
+            // /** @var GoogleProvider $driver */
+            // $driver = Socialite::driver('google');
 
-            /** @var SocialiteUser $googleUser */
-            $googleUser = $driver
-                ->setHttpClient($httpClient)
-                ->stateless()
-                ->user();
+            // /** @var SocialiteUser $googleUser */
+            // $googleUser = $driver
+            //     ->setHttpClient($httpClient)
+            //     ->stateless()
+            //     ->user();
+            $googleUser = Socialite::driver('google')->stateless()->user();
 
             Log::info('Google User:', ['email' => $googleUser->getEmail()]);
 
@@ -190,11 +191,11 @@ class AuthController extends Controller
      *
      * @return string|bool
      */
-    protected function getCertificatePath()
-    {
-        return app()->environment('local')
-            ? false // Disable verification in local
-            : base_path('cacert.pem'); // Use certificate in production
-    }
+    // protected function getCertificatePath()
+    // {
+    //     return app()->environment('local')
+    //         ? false // Disable verification in local
+    //         : base_path('cacert.pem'); // Use certificate in production
+    // }
 
 }

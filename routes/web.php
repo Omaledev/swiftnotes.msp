@@ -16,14 +16,19 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ChatController;
 
 
-Route::get('/', function () {
-    return redirect()->route('auth.login');
-});
+// Route::get('/', function () {
+//     return redirect()->route('auth.login');
+// });
 // register,login and logout routes
 Route::get('/register', [AuthController::class, 'showregister'])->name('auth.register');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
-Route::get('/login', [AuthController::class, 'showlogin'])->name('auth.login');
-Route::post('/login', [AuthController::class, 'login'])->name('login');
+
+// Route::get('/login', [AuthController::class, 'showlogin'])->name('auth.login');
+// Route::post('/login', [AuthController::class, 'login'])->name('login');
+
+Route::get('/', [AuthController::class, 'showlogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('auth.login.submit');
+
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])
