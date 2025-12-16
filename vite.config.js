@@ -14,6 +14,10 @@ export default defineConfig(({ mode }) => { // Add mode parameter
             }),
             tailwindcss(),
         ],
+
+        build: {
+            target: 'esnext' 
+        },
         // Explicitly defining the environment variables for Vite
         define: {
             'process.env': {}, // For compatibility 
