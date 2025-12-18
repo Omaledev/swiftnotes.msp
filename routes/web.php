@@ -14,6 +14,9 @@ use App\Http\Controllers\CollaboratorsController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ChatController;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Artisan;
+
 
 
 // Route::get('/', function () {
@@ -93,6 +96,24 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
+
+Route::get('/nuke-database', function () {
+    // 1. Force Drop All Tables (Manual Clean)
+    Schema::disableForeignKeyConstraints();
+    foreach(Schema::getTables() as $table) {
+        Schema::dropIfExists($table['name']);
+    }
+    Schema::enableForeignKeyConstraints();
+
+    // 2. Run Migrations Fresh
+    Artisan::call('migrate', ['--force' => true]);
+    
+    // 3. Clear Caches
+    Artisan::call('config:clear');
+    Artisan::call('view:clear');
+
+    return "DONE! Database has been completely wiped and rebuilt.";
+});
 
 
 

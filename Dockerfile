@@ -62,5 +62,5 @@ ENV APP_ENV production
 ENV APP_DEBUG false
 ENV LOG_CHANNEL stderr
 
-# 12. Start Apache (Wipe first, then Migrate to clear transaction errors)
-CMD ["/bin/sh", "-c", "php artisan db:wipe --force && php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache && apache2-foreground"]
+# 12. Start Apache (Standard command, no auto-wipe)
+CMD ["/bin/sh", "-c", "php artisan config:cache && php artisan route:cache && php artisan view:cache && apache2-foreground"]
