@@ -2,6 +2,7 @@
 FROM php:8.2-apache
 
 # 1. Install system dependencies
+# ADDED: libpq-dev (Required for PostgreSQL)
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
@@ -9,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libpq-dev \
     nodejs \
     npm
 
@@ -16,9 +18,10 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # 3. Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+# ADDED: pdo_pgsql (Required to talk to Render DB)
+RUN docker-php-ext-install pdo_pgsql mbstring exif pcntl bcmath gd zip
 
-# 4. Enable Apache mod_rewrite (Fixes 404 errors)
+# 4. Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
 # 5. Configure Apache to serve from "public"
@@ -33,7 +36,6 @@ WORKDIR /var/www/html
 COPY . .
 
 # --- FIX: Dummy variables for Build Process ---
-# Required so Composer doesn't crash looking for Pusher keys
 ENV BROADCAST_DRIVER log
 ENV PUSHER_APP_KEY build_key
 ENV PUSHER_APP_ID build_id
