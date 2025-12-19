@@ -64,4 +64,7 @@ ENV LOG_CHANNEL stderr
 
 # 12. Start Apache
 # CHANGED: We use "config:clear" instead of "cache". This prevents the app from getting stuck with empty DB credentials.
-CMD ["/bin/sh", "-c", "php artisan config:clear && php artisan route:clear && php artisan view:clear && apache2-foreground"]
+# CMD ["/bin/sh", "-c", "php artisan config:clear && php artisan route:clear && php artisan view:clear && apache2-foreground"]
+
+# We added 'php artisan migrate --force' to create your database tables automatically
+CMD ["/bin/sh", "-c", "php artisan migrate --force && php artisan config:clear && php artisan route:clear && php artisan view:clear && apache2-foreground"]
