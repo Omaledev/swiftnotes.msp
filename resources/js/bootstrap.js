@@ -5,7 +5,8 @@ import Pusher from 'pusher-js';
 // --- 1. AXIOS SETUP ---
 window.axios = axios;
 
-// THE FIX: Set baseURL to '/' so it automatically uses your Render URL
+// THE FIX: We use '/' so the browser automatically uses the current domain (Render)
+// instead of trying to connect to 127.0.0.1
 window.axios.defaults.baseURL = '/'; 
 
 window.axios.defaults.withCredentials = true;
@@ -19,13 +20,12 @@ if (csrfToken) {
     console.error('CSRF token not found');
 }
 
-// Axios request interceptor
+// Axios request interceptor (Handles Authentication)
 window.axios.interceptors.request.use(config => {
     const sanctumToken = localStorage.getItem('sanctum_token');
     
     if (sanctumToken) {
         config.headers['Authorization'] = `Bearer ${sanctumToken}`;
-        // Note: X-XSRF-TOKEN is usually handled by cookies, but this is fine to keep
         config.headers['X-XSRF-TOKEN'] = sanctumToken;
     }
 
@@ -51,7 +51,8 @@ async function initializeAuth() {
 
 // Helper to start Pusher
 function initializePusher() {
-    if (!window.Echo) {
+    // Only initialize if keys are present
+    if (!window.Echo && import.meta.env.VITE_PUSHER_APP_KEY) {
         const token = document.querySelector('meta[name="csrf-token"]')?.content;
         const sanctum = localStorage.getItem('sanctum_token');
 
@@ -61,7 +62,7 @@ function initializePusher() {
             cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
             forceTLS: true,
             encrypted: true,
-            authEndpoint: '/api/broadcasting/auth', // Make sure this matches your api.php routes
+            authEndpoint: '/api/broadcasting/auth', 
             auth: {
                 headers: {
                     'X-CSRF-TOKEN': token,
@@ -74,7 +75,7 @@ function initializePusher() {
 }
 
 // --- 3. INITIALIZATION ---
-// We wrap this in an async IIFE to handle the top-level await cleanly
+// This wrapper prevents "Top-level await" errors during the build
 (async () => {
     await initializeAuth();
     initializePusher();
