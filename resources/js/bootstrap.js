@@ -2,9 +2,12 @@ import axios from 'axios';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
-// Axios setup
+// --- 1. AXIOS SETUP ---
 window.axios = axios;
-window.axios.defaults.baseURL = import.meta.env.VITE_APP_URL || 'http://127.0.0.1:8000';
+
+// THE FIX: Set baseURL to '/' so it automatically uses your Render URL
+window.axios.defaults.baseURL = '/'; 
+
 window.axios.defaults.withCredentials = true;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -18,34 +21,25 @@ if (csrfToken) {
 
 // Axios request interceptor
 window.axios.interceptors.request.use(config => {
-
     const sanctumToken = localStorage.getItem('sanctum_token');
-        if (sanctumToken) {
-            window.axios.defaults.headers.common['Authorization'] = `Bearer ${sanctumToken}`;
-            console.log('Sanctum token set:', sanctumToken);
-        } else {
-            console.warn('No Sanctum token found in localStorage');
-        }
-
-
+    
     if (sanctumToken) {
         config.headers['Authorization'] = `Bearer ${sanctumToken}`;
+        // Note: X-XSRF-TOKEN is usually handled by cookies, but this is fine to keep
         config.headers['X-XSRF-TOKEN'] = sanctumToken;
     }
 
-    // Content type set
     config.headers['Content-Type'] = 'application/json';
     config.headers['Accept'] = 'application/json';
 
     return config;
 });
 
-// Pusher/Echo setup
+// --- 2. PUSHER / ECHO SETUP ---
 window.Pusher = Pusher;
 window.Echo = null;
 
-
-// Add this before initializing Pusher
+// Helper to init auth cookies
 async function initializeAuth() {
     try {
         await axios.get('/sanctum/csrf-cookie');
@@ -55,14 +49,11 @@ async function initializeAuth() {
     }
 }
 
-// Call it before Pusher initialization
-await initializeAuth();
-initializePusher();
-
+// Helper to start Pusher
 function initializePusher() {
     if (!window.Echo) {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-        const sanctumToken = localStorage.getItem('sanctum_token');
+        const token = document.querySelector('meta[name="csrf-token"]')?.content;
+        const sanctum = localStorage.getItem('sanctum_token');
 
         window.Echo = new Echo({
             broadcaster: 'pusher',
@@ -70,29 +61,27 @@ function initializePusher() {
             cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
             forceTLS: true,
             encrypted: true,
-            authEndpoint: '/api/broadcasting/auth',
+            authEndpoint: '/api/broadcasting/auth', // Make sure this matches your api.php routes
             auth: {
                 headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Authorization': `Bearer ${sanctumToken}`
+                    'X-CSRF-TOKEN': token,
+                    'Authorization': `Bearer ${sanctum}`
                 }
-            },
-            // Add these options for better connection handling
-            wsHost: import.meta.env.VITE_PUSHER_HOST || `ws-${import.meta.env.VITE_PUSHER_APP_CLUSTER}.pusher.com`,
-            wsPort: import.meta.env.VITE_PUSHER_PORT || 80,
-            wssPort: import.meta.env.VITE_PUSHER_PORT || 443,
-            disableStats: true,
-            enabledTransports: ['ws', 'wss']
+            }
         });
     }
     return window.Echo;
 }
 
-// Export for ES modules
-export { initializePusher, }
-// Make initializePusher available globally
+// --- 3. INITIALIZATION ---
+// We wrap this in an async IIFE to handle the top-level await cleanly
+(async () => {
+    await initializeAuth();
+    initializePusher();
+})();
+
+// Exports
+export { initializePusher };
 window.initializePusher = initializePusher;
-
-
 
 console.log('Bootstrap.js loaded');
