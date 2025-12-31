@@ -97,24 +97,14 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
-Route::get('/nuke-database', function () {
-    // 1. Force Drop All Tables (Manual Clean)
-    Schema::disableForeignKeyConstraints();
-    foreach(Schema::getTables() as $table) {
-        Schema::dropIfExists($table['name']);
-    }
-    Schema::enableForeignKeyConstraints();
 
-    // 2. Run Migrations Fresh
+Route::get('/run-migration', function () {
+    // 1. Run the migration
     Artisan::call('migrate', ['--force' => true]);
     
-    // 3. Clear Caches
-    Artisan::call('config:clear');
-    Artisan::call('view:clear');
-
-    return "DONE! Database has been completely wiped and rebuilt.";
+    // 2. Return the result
+    return 'Done! <br><pre>' . Artisan::output() . '</pre>';
 });
-
 
 
 
