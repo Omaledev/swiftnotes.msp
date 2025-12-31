@@ -63,8 +63,8 @@ ENV APP_ENV production
 ENV LOG_CHANNEL stderr
 
 # 12. Start Apache
-CMD ["/bin/sh", "-c", "php artisan config:clear && php artisan route:clear && php artisan view:clear && apache2-foreground"]
+# CMD ["/bin/sh", "-c", "php artisan config:clear && php artisan route:clear && php artisan view:clear && apache2-foreground"]
 
 
 # The "--force" is crucial for production
-# CMD ["/bin/sh", "-c", "php artisan migrate --force && php artisan config:clear && php artisan route:clear && php artisan view:clear && apache2-foreground"]
+CMD ["/bin/sh", "-c", "php artisan migrate --force && php artisan config:clear && php artisan route:clear && php artisan view:clear && apache2-foreground"]

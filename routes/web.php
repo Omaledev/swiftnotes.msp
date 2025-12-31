@@ -98,14 +98,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 
-Route::get('/run-migration', function () {
-    // 1. Run the migration
-    Artisan::call('migrate', ['--force' => true]);
-    
-    // 2. Return the result
-    return 'Done! <br><pre>' . Artisan::output() . '</pre>';
-});
-
 
 
 
